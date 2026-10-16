@@ -31,29 +31,30 @@ else:
         st.rerun()
 
     st.write("Entrez l'URL d'une vidéo YouTube ci-dessous.")
-    url = st.text_input("URL de la vidéo :", placeholder="https://youtube.com...")
+    url = st.text_input("URL de la vidéo :", placeholder="https://www.youtube.com/watch?v=...")
 
     if st.button("Télécharger la vidéo"):
         if not url.strip():
             st.error("Veuillez entrer une URL valide.")
         else:
             statut = st.empty()
-            statut.info("Téléchargement en cours sur le serveur avec authentification...")
+            statut.info("Téléchargement en cours (Format de secours 3GP/MP4)...")
 
-            # Détection du fichier de cookies s'il est présent sur le dépôt
             nom_cookie = "youtube.com_cookies.txt"
             
             ydl_opts = {
-                'format': 'best',
+                # '18' est le format MP4 360p universel de YouTube qui contourne la majorité des erreurs 403
+                'format': '18/best', 
                 'extractor_args': {
                     'youtube': {
                         'player_client': ['android', 'web_safari']
                     }
                 },
-                'outtmpl': '%(title)s.%(ext)s'
+                'outtmpl': '%(title)s.%(ext)s',
+                'no_warnings': True,
+                'quiet': True
             }
             
-            # Si le fichier de cookies existe, on l'injecte dans la configuration
             if os.path.exists(nom_cookie):
                 ydl_opts['cookiefile'] = nom_cookie
 
@@ -62,7 +63,7 @@ else:
                     info = ydl.extract_info(url, download=True)
                     nom_fichier = ydl.prepare_filename(info)
                 
-                statut.success("🔥 Vidéo récupérée avec succès par le serveur !")
+                statut.success("🔥 Vidéo récupérée avec succès !")
                 
                 if os.path.exists(nom_fichier):
                     with open(nom_fichier, "rb") as file:

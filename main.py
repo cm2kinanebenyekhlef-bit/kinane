@@ -31,7 +31,7 @@ else:
 
     st.markdown("### 🛠️ Mode d'emploi en 2 étapes :")
     
-    # Code JavaScript du Bookmarklet qui extrait l'URL de la vidéo en cours et l'envoie à un outil tiers fiable
+    # Code JavaScript du Bookmarklet
     bookmarklet_code = (
         "javascript:(function(){"
         "var url = window.location.href;"
@@ -45,16 +45,15 @@ else:
     
     st.write("1. **Glissez-déposez** le bouton vert ci-dessous directement dans la **barre des favoris / marque-pages** de votre navigateur internet :")
     
-    # Création du bouton glissable en HTML/CSS
+    # Correction ici : Utilisation du paramètre correct unsafe_allow_html=True
     st.markdown(
         f'<a href="{bookmarklet_code}" style="display: inline-block; padding: 15px 25px; '
         f'font-size: 16px; font-weight: bold; color: white; background-color: #28a745; '
         f'text-align: center; text-decoration: none; border-radius: 8px; cursor: move;">'
         f'🚀 TELECHARGER LA VIDEO</a>', 
-        unsafe_allow_allowed_html=True
+        unsafe_allow_html=True
     )
     
     st.write("")
     st.write("2. **Allez sur YouTube**, ouvrez la vidéo de votre choix, puis **cliquez simplement sur ce favori** dans votre barre de navigation.")
     st.info("Un nouvel onglet sécurisé va s'ouvrir, décodant la vidéo instantanément grâce à votre propre connexion internet, éliminant définitivement l'erreur 403.")
-

@@ -1,17 +1,15 @@
 import streamlit as st
-import yt_dlp
-import os
 
 CODE_SECRET = "Soulfly2026"
 
-st.set_page_config(page_title="YouTube MP3 Downloader Privé", page_icon="🔒", layout="centered")
+st.set_page_config(page_title="YouTube Bypass Downloader", page_icon="🔒", layout="centered")
 
 if "authentifie" not in st.session_state:
     st.session_state["authentifie"] = False
 
 if not st.session_state["authentifie"]:
     st.title("🔒 Accès Restreint")
-    st.write("Veuillez saisir le code d'accès pour utiliser le convertisseur.")
+    st.write("Veuillez saisir le code d'accès pour débloquer le téléchargeur.")
     
     code_saisi = st.text_input("Code d'accès :", type="password")
     valider = st.button("Valider")
@@ -24,51 +22,39 @@ if not st.session_state["authentifie"]:
             st.error("Code incorrect. Accès refusé.")
 
 else:
-    st.title("🎵 YouTube MP3 Downloader (Spécial Cloud)")
-    st.write("Ce mode extrait uniquement l'audio pour contourner les blocages pare-feu de YouTube.")
+    st.title("🎬 Décodeur YouTube Universel (Anti-403)")
+    st.write("Les serveurs Cloud étant bloqués par YouTube, voici la méthode universelle pour télécharger instantanément sans erreur.")
     
     if st.sidebar.button("Se déconnecter"):
         st.session_state["authentifie"] = False
         st.rerun()
 
-    url = st.text_input("URL de la vidéo :", placeholder="https://www.youtube.com/watch?v=...")
+    st.markdown("### 🛠️ Mode d'emploi en 2 étapes :")
+    
+    # Code JavaScript du Bookmarklet qui extrait l'URL de la vidéo en cours et l'envoie à un outil tiers fiable
+    bookmarklet_code = (
+        "javascript:(function(){"
+        "var url = window.location.href;"
+        "if(url.indexOf('://youtube.com') !== -1 || url.indexOf('youtu.be/') !== -1){"
+        "window.open('https://9xbuddy.in' + encodeURIComponent(url), '_blank');"
+        "}else{"
+        "alert('Ouvrez d\'abord une vidéo YouTube avant de cliquer ici !');"
+        "}"
+        "})();"
+    )
+    
+    st.write("1. **Glissez-déposez** le bouton vert ci-dessous directement dans la **barre des favoris / marque-pages** de votre navigateur internet :")
+    
+    # Création du bouton glissable en HTML/CSS
+    st.markdown(
+        f'<a href="{bookmarklet_code}" style="display: inline-block; padding: 15px 25px; '
+        f'font-size: 16px; font-weight: bold; color: white; background-color: #28a745; '
+        f'text-align: center; text-decoration: none; border-radius: 8px; cursor: move;">'
+        f'🚀 TELECHARGER LA VIDEO</a>', 
+        unsafe_allow_allowed_html=True
+    )
+    
+    st.write("")
+    st.write("2. **Allez sur YouTube**, ouvrez la vidéo de votre choix, puis **cliquez simplement sur ce favori** dans votre barre de navigation.")
+    st.info("Un nouvel onglet sécurisé va s'ouvrir, décodant la vidéo instantanément grâce à votre propre connexion internet, éliminant définitivement l'erreur 403.")
 
-    if st.button("Extraire l'audio (MP3)"):
-        if not url.strip():
-            st.error("Veuillez entrer une URL valide.")
-        else:
-            statut = st.empty()
-            statut.info("Extraction du flux audio en cours sur le serveur...")
-
-            # Configuration stricte Audio + Impersonation pour masquer le serveur Streamlit
-            ydl_opts = {
-                'format': 'bestaudio/best',
-                'http_headers': {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                    'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
-                },
-                'outtmpl': '%(title)s.%(ext)s',
-                'no_warnings': True,
-                'quiet': True
-            }
-
-            try:
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    info = ydl.extract_info(url, download=True)
-                    nom_fichier = ydl.prepare_filename(info)
-                
-                statut.success("🔥 Flux audio récupéré avec succès !")
-                
-                if os.path.exists(nom_fichier):
-                    with open(nom_fichier, "rb") as file:
-                        st.download_button(
-                            label="💾 Enregistrer le fichier audio",
-                            data=file,
-                            file_name=f"{info.get('title')}.mp3",
-                            mime="audio/mp3"
-                        )
-                    os.remove(nom_fichier)
-                    
-            except Exception as e:
-                statut.error(f"Une erreur est survenue : {e}")
